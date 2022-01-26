@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
+from datetime import datetime, timedelta
+
 import uuid
 
 
@@ -14,6 +16,14 @@ class User(AbstractUser):
                                        "/default.png")
 
 
-class RegistrationLinkGenerator:
-    url = models.URLField(default=uuid.uuid4().hex)
-    alive_time = models.IntegerField(verbose_name="Время жизни ссылки", default=60)
+class RegistrationLinkGenerator(models.Model):
+    url_hash = models.CharField(default=uuid.uuid4().hex, max_length=64)
+    alive_time = models.IntegerField(verbose_name="Время жизни ссылки(дни)", default=60)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_alive(self) -> bool:
+        """Вернёт true, если ссылка жива, иначе false"""
+        if (self.created_at + timedelta(days=self.alive_time)).timestamp() > datetime.now().timestamp():
+            return True
+
+        return False
