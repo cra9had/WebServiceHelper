@@ -23,7 +23,7 @@ class RegistrationLinkGenerator(models.Model):
 
     def is_alive(self) -> bool:
         """Вернёт true, если ссылка жива, иначе false"""
-        if (self.created_at + timedelta(days=self.alive_time)).timestamp() > datetime.now().timestamp():
+        if not (self.created_at + timedelta(days=self.alive_time)).timestamp() <= datetime.now().timestamp():
             return True
 
         return False
