@@ -22,7 +22,7 @@ class User(AbstractUser):
                                default="images/uploads/users/avatars"
                                        "/default.png")
     description = models.TextField(max_length=1200, default="Пользователь не написал о себе.")
-    abilities = models.ManyToManyField(Ability)
+    abilities = models.ManyToManyField(Ability, max_length=10)
 
 
 class RegistrationLinkGenerator(models.Model):

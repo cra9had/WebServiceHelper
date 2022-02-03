@@ -1,3 +1,5 @@
+from abc import ABC
+
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
@@ -6,17 +8,9 @@ User = get_user_model()
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
-    user_abilities = serializers.SerializerMethodField("get_abilities")
-
     class Meta:
         model = User
-        fields = ("username", "avatar", "description", "user_abilities")
-
-    @staticmethod
-    def get_abilities(obj):
-        print(obj.username)
-        user = User.objects.get(id=obj.id)
-        return [ability.name for ability in user.abilities.all()]
+        fields = ("username", "avatar", "description", "abilities")
 
 
 class RegisterPageSerializer(serializers.Serializer):

@@ -2,7 +2,7 @@
   <div class="container-sm" style="margin-top: 4rem">
     <h2 style="text-align: center">Sign Up</h2>
     <hr>
-    <form @submit.prevent="register">
+    <form @submit.prevent="register" style="margin-top: 2rem">
       <div class="mb-3">
         <label for="InputEmail" class="form-label">Email address</label>
         <input type="email" class="form-control" id="InputEmail" aria-describedby="emailHelp">
@@ -30,7 +30,8 @@ export default {
       console.log("valid")
     } else {
       this.$router.push({
-        "name": "PageNotFound"
+        "name": "PageNotFound",
+        "params": {}
       })
     }
 

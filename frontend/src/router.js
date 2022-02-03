@@ -13,7 +13,7 @@ export default new Router({
             name: "HomePage"
         },
         {
-            path: "*",
+            path: '/:pathMatch(.*)*',
             component: PageNotFound,
             name: "PageNotFound"
         }
