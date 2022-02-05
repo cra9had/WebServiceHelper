@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .services.user_services import get_user_by_name, get_user_by_request
 from .services.registration import is_link_valid, create_user
-from .serializers import RegisterUserSerializer, RegisterPageSerializer, UserInfoSerializer
+from .serializers import RegisterUserSerializer, RegisterPageSerializer, UserInfoSerializer, LoginSerializer
 from .exceptions import UserAlreadyExist, URLHashDoesNotExist
 from django.contrib.auth import get_user_model
 
@@ -27,6 +27,19 @@ class RegisterPageView(APIView):
             if is_link_valid(data["url_hash"]):
                 return Response({}, status=status.HTTP_200_OK)
         return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+
+class LoginAPIView(APIView):
+    """This view authenticate user. It returns token"""
+    permission_classes = (AllowAny,)
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        user = request.data.get('user', {})
+        serializer = self.serializer_class(data=user)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProfileAPIView(APIView):
@@ -60,7 +73,9 @@ class UserInfoAPIView(APIView):
         except User.DoesNotExist:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = UserInfoSerializer(user)
+        serializer = UserInfoSerializer(user, context={
+            "request": request
+        })
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

@@ -15,7 +15,7 @@
             </ul>
             <form class="d-flex">
               <div v-if="!user_data['is_signed_up']">
-                <!-- <a v-on:click="push_login_page" class="auth-button">Sign In</a> -->
+                <a v-on:click="push_login_page" class="auth-button">Sign In</a>
               </div>
               <div v-else>
                 <div class="dropdown">
@@ -26,7 +26,7 @@
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="#">Мой профиль</a></li>
                     <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#" v-on:click="logout">Выйти</a></li>
+                    <!-- <li><a class="dropdown-item" href="#" v-on:click="logout">Выйти</a></li> -->
                   </ul>
                 </div>
               </div>
@@ -35,7 +35,7 @@
         </div>
       </nav>
     </header>
-    <router-view v-on:LoginAuth="get_user_data($event)"/>
+    <router-view v-on:LoginAuth="on_auth($event)"/>
   </div>
 </template>
 
@@ -53,9 +53,22 @@ export default {
     await this.get_user_data()
   },
   methods: {
+    push_login_page(){
+      this.$router.push({
+        "name": "LoginPage"
+      })
+    },
+    
     async set_user_data(data, is_signed_up){
       this.user_data = data
       this.user_data.is_signed_up = is_signed_up;
+    },
+
+    async on_auth(){
+      await this.get_user_data()
+      this.$router.push(
+        "user/" + this.user_data["username"]
+      )
     },
 
     async get_user_data(){
@@ -67,9 +80,8 @@ export default {
             "Content-Type": "application/json",
             "Authorization": "Token " + this.token
           }})
-        
         if (await this.response.status === 200){
-          await this.set_user_data(this.response, true)
+          await this.set_user_data(await this.response.json(), true)
         }
         else if (await this.response.status === 401){
           localStorage.token = ""

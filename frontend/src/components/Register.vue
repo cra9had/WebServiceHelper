@@ -46,14 +46,16 @@ export default {
         },
         body: JSON.stringify({
           "username": document.getElementById("InputUsername").value,
-          "email": document.getElementById("InputUsername").value,
+          "email": document.getElementById("InputEmail").value,
           "password": document.getElementById("InputPassword").value,
           "url_hash": this.hash
         })
       })
       this.response_json = await this.response.json()
       if (await this.response.status === 200){
-        console.log("token" + this.response_json["token"])
+        localStorage.token = this.response_json["token"]
+        this.$emit("LoginAuth")
+    
       }
       else{
       console.log(this.response_json)
